@@ -65,7 +65,7 @@ let direction = new THREE.Vector3();
 let vertex = new THREE.Vector3();
 let color = new THREE.Color();
 
-let broker = 'ws://localhost:8080';
+let broker = 'wss://broker.emqx.io:8084/mqtt';
 let client = mqtt.connect(broker);
 
 
