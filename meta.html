@@ -25,7 +25,7 @@ function openSnap() {
 	let model = document.getElementById("model").value;
 	if (model == "") model = "snapcraft";
 
-	return window.open ("snap.html#run:" + model + ".xml&local=true&editMode&rid=" + rid, "SnapCraft",
+	return window.open ("https://snap.berkeley.edu/versions/dev/snap.html#run:" + model + ".xml&editMode&rid=" + rid, "SnapCraft",
 	"dependent=yes,location=yes,statusbar=yes,status=yes,titlebar=yes,resizable=yes,width=910,height=600,top=120");
 }
 
