@@ -23,7 +23,7 @@
 
 function openSnap() {
 	let model = document.getElementById("model").value;
-	if (model == "") model = "snapcraft";
+	if (model == "") model = "meta";
 
 	return window.open ("https://snap.berkeley.edu/versions/dev/snap.html#run:" + model + ".xml&editMode&rid=" + rid, "SnapCraft",
 	"dependent=yes,location=yes,statusbar=yes,status=yes,titlebar=yes,resizable=yes,width=910,height=600,top=120");
