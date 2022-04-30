@@ -24,8 +24,8 @@
 function openSnap() {
 	let model = document.getElementById("model").value;
 	if (model == "") model = "meta";
-
-	return window.open ("https://snap.berkeley.edu/snap/snap.html#run:" + model + ".xml&editMode&rid=" + rid, "SnapCraft",
+	
+	return window.open ("https://snap.berkeley.edu/snap/snap.html#run:https://raw.githubusercontent.com/pixavier/meta4snap/main/" + model + ".xml&editMode&rid=" + rid, "SnapCraft",
 	"dependent=yes,location=yes,statusbar=yes,status=yes,titlebar=yes,resizable=yes,width=910,height=600,top=120");
 }
 
