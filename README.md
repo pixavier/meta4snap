@@ -6,3 +6,4 @@ Snap *!* controlled minimal 4.0 metaverse, for educational and evangelization pu
 
 In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!* library that comunicates to visor by MQTT.
 
+![View](img/example01.png)
