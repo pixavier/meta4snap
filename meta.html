@@ -1,3 +1,4 @@
+
 <html>
   <head>
     <title>Low-Code Basic 4.0 Metaverse</title>
@@ -785,10 +786,10 @@ function hideAxes(topic, param) {
 
 function introspect(topic, param) {
 	let res = {};
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let obj, rot;
-	if (param.name == 'scene') {
+	if (param.name == '' || param.name == 'scene') {
 		obj = scene;
 		obj.userData.snapType = 'minimalMetaverse';
 	} else {
@@ -862,7 +863,7 @@ function introspect(topic, param) {
 
 function getPose(topic, param) {
 	let res = new Array(6);
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
@@ -879,7 +880,7 @@ function getPose(topic, param) {
 
 function getPoseAbsolute(topic, param) {
 	let res = new Array(6);
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
@@ -903,7 +904,7 @@ function getPoseAbsolute(topic, param) {
 
 function getClass(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
@@ -915,7 +916,7 @@ function getClass(topic, param) {
 
 function getPointAt(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
@@ -932,7 +933,7 @@ function getPointAt(topic, param) {
 
 function getTrajectory(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let m = parseInt(param.n);
 	let step = 1 / (m - 1);
@@ -978,7 +979,7 @@ function addCollidable(topic, param) {
 
 function doCollisionCheck(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	res = '' + collisionCheck();
 	client.publish(callback, res);
@@ -986,7 +987,7 @@ function doCollisionCheck(topic, param) {
 
 function getCollisionObj(topic, param) {
 	let res = {};
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	if (collisionObj) {
 		res.name = collisionObj.name;
@@ -997,7 +998,7 @@ function getCollisionObj(topic, param) {
 
 function getCollidables(topic, param) {
 	let res = '[]';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let v = [];
 	let objRes;
@@ -1034,7 +1035,7 @@ function setAttribute(topic, param) {
 
 function getAttribute(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
@@ -1046,7 +1047,7 @@ function getAttribute(topic, param) {
 
 function getOID(topic, param) {
 	let res = '';
-	let n = topic.lastIndexOf('/');
+	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 	let objs = getObjectAndWiresByNameOrId(param.name);
 	let obj = objs[0];
