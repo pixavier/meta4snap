@@ -1165,13 +1165,16 @@ function getObjectAndWiresByNameOrId(name) {
 	
 	if (name && name == 'camera') {
 		res[0] = camera;
+	} else if (name && name == 'scene') {
+		res[0] = scene;
 	} else if (name && name.startsWith('oid')) {
 		let id = parseInt(name.substring(3));
 		res[0] = scene.getObjectById(id);
 		if (res[0])	res[1] = res[0].parent.getObjectByName(res[0].name + '_lines');
 	} else if (name && name != 'scene') {
 		if (name.indexOf(';') >= 0) {
-			let names = name.split(';');
+			let names = name.replaceAll('/', ';');
+			names = name.split(';');
 			let n = names.length;
 			let obj = scene.getObjectByName(names[0]);
 			if (!obj) return res;
