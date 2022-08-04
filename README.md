@@ -1,6 +1,6 @@
 # meta4snap
 
-Snap *!* controlled minimal 4.0 metaverse, for educational and evangelization purposes.
+Snap *!* controlled experimental minimal 4.0 metaverse, for educational and evangelization purposes.
 In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!* library that comunicates to visor by MQTT.
 
 ## [Try it](https://pixavier.github.io/meta4snap)
