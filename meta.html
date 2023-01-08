@@ -273,6 +273,10 @@ client.on("message", function (topic, payload) {
 			getOID(topic, param);
 		}
 
+		if (op == 'getDistance') {
+			getDistance(topic, param);
+		}
+		
 		render();
 	} catch (e) {	
 		console.log(e.stack);
