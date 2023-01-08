@@ -1077,7 +1077,7 @@ function getDistance(topic, param) {
 	let y2 = parseFloat(param.point2[1]);
 	let z2 = parseFloat(param.point2[2]);
 
-	res = '' + ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)^0.5; 
+	res = '' + Math.sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2); 
 
 	console.log(callback);
 	console.log(res);
