@@ -920,7 +920,7 @@ function getDistance(topic, param) {
 
 	res = '' + ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)^0.5; 
 
-	client.publish(callback, JSON.stringify(res, null, 2));
+	client.publish(callback, res);
 }
 
 
