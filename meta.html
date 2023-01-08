@@ -910,13 +910,13 @@ function getPoseAbsolute(topic, param) {
 function getDistance(topic, param) {
 	let res = 0;
 	
-	let x1 = param.point1[0];
-	let y1 = param.point1[1];
-	let z1 = param.point1[2];
+	let x1 = parseFloat(param.point1[0]);
+	let y1 = parseFloat(param.point1[1]);
+	let z1 = parseFloat(param.point1[2]);
 
-	let x2 = param.point2[0];
-	let y2 = param.point2[1];
-	let z2 = param.point2[2];
+	let x2 = parseFloat(param.point2[0]);
+	let y2 = parseFloat(param.point2[1]);
+	let z2 = parseFloat(param.point2[2]);
 
 	res = '' + ((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)^0.5; 
 
