@@ -1063,6 +1063,8 @@ function getOID(topic, param) {
 }
 
 function getDistance(topic, param) {
+	console.log(topic);
+	console.log(param);
 	let res = 0;
 	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
