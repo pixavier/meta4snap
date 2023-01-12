@@ -312,7 +312,9 @@ function createSceneCameraAndRenderer() {
 	const intensity = 3;
 	let light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
 	scene.add(light);	
-	renderer = new THREE.WebGLRenderer();
+//	renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );	
+	
 	renderer2 = new CSS3DRenderer();
 
 	let canvas = renderer.domElement;
