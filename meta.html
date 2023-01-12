@@ -82,6 +82,7 @@ let camera = null;
 let controls = null;
 let controlPressed = false;
 let shiftPressed = false;
+let canvas = null;
 
 createSceneCameraAndRenderer();
 
@@ -276,6 +277,10 @@ client.on("message", function (topic, payload) {
 		if (op == 'getDistance') {
 			getDistance(topic, param);
 		}
+
+		if (op == 'getSnapshot') {
+			getSnapshot(topic, param);
+		}
 		
 		render();
 	} catch (e) {	
@@ -311,7 +316,7 @@ function createSceneCameraAndRenderer() {
 	renderer = new THREE.WebGLRenderer();
 	renderer2 = new CSS3DRenderer();
 
-	var canvas = renderer.domElement;
+	canvas = renderer.domElement;
     document.body.appendChild(canvas);
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.setClearColor(0xdddddd, 1);
@@ -1075,6 +1080,17 @@ function getDistance(topic, param) {
 	res = '' + Math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2); 
 	client.publish(callback, res);
 }
+
+
+function getSnapshot(topic, param) {
+	let res = '';
+	let n = topic.lastIndexOf('@');
+	let callback = topic.substring(n + 1);
+
+	res = canvas.toDataURL();
+	client.publish(callback, JSON.stringify(res, null, 2));
+}
+
 
 // -----------------------------------------------------------------
 
