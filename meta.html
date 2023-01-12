@@ -1086,7 +1086,7 @@ function getSnapshot(topic, param) {
 	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 
-	res = renderer.domElement.toDataURL();
+	res = renderer2.domElement.toDataURL();
 	window.lastSnapshot = res;
 	client.publish(callback, res);
 }
