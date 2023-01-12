@@ -82,6 +82,7 @@ let camera = null;
 let controls = null;
 let controlPressed = false;
 let shiftPressed = false;
+let canvas = null;
 
 createSceneCameraAndRenderer();
 
@@ -317,7 +318,7 @@ function createSceneCameraAndRenderer() {
 	
 	renderer2 = new CSS3DRenderer();
 
-	let canvas = renderer.domElement;
+	canvas = renderer.domElement;
     document.body.appendChild(canvas);
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.setClearColor(0xdddddd, 1);
@@ -1088,7 +1089,6 @@ function getSnapshot(topic, param) {
 	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 
-	let canvas = renderer.domElement;
 	canvas.getContext('webgl' , {preserveDrawingBuffer: true});
 	render();
 	res = canvas.toDataURL();
