@@ -1090,7 +1090,7 @@ function getSnapshot(topic, param) {
 
 	let canvas = renderer.domElement;
 	canvas.getContext('webgl' , {preserveDrawingBuffer: true});
-	this.render();
+	render();
 	res = canvas.toDataURL();
 	canvas.getContext('webgl' , {preserveDrawingBuffer: false});	
 	window.lastSnapshot = res;
