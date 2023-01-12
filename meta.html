@@ -312,8 +312,8 @@ function createSceneCameraAndRenderer() {
 	const intensity = 3;
 	let light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
 	scene.add(light);	
-//	renderer = new THREE.WebGLRenderer();
-        renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );	
+	renderer = new THREE.WebGLRenderer();
+//	renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );	
 	
 	renderer2 = new CSS3DRenderer();
 
@@ -1088,7 +1088,11 @@ function getSnapshot(topic, param) {
 	let n = topic.lastIndexOf('@');
 	let callback = topic.substring(n + 1);
 
-	res = renderer.domElement.toDataURL();
+	let canvas = this.renderer.domElement;
+	canvas.getContext('webgl' , {preserveDrawingBuffer: true});
+	this.render();
+	res = image: canvas.toDataURL();
+	canvas.getContext('webgl' , {preserveDrawingBuffer: false});	
 	window.lastSnapshot = res;
 	client.publish(callback, res);
 }
