@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+
+iframe {
+    display: block;
+    border: none;
+    height: calc(100vh - 30px);
+    width: 100%;
+}
+
+</style>
+
+
+<a href="https://insightmaker.com/sites/default/files/api/files/API-js.html" target="_blank">API</a>&nbsp;&nbsp;&nbsp;
+
+<button onclick="run()">Run Model</button> - 
+<button onclick="resume()">Resume</button> 
+
+<iframe id="InsightMakerModel1" src="https://insightmaker.com/insight/4wBDq7v9Fdr5aptSwaYe7L?topBar=1&sideBar=1&zoom=1"></iframe>
+
+<script>
+
+let f = document.getElementById('InsightMakerModel1');
+let w = f.contentWindow;
+
+var stepResults = {};
+
+function run() {
+/*
+	w.postMessage(`runModel({
+		  silent: true,
+		  onPause: function(results){
+			  console.log("Simulation Step");
+			  stepResults = results;
+		  },
+		  onError: function(){
+			  alert("A simulation error occurred.");
+		  }
+		})`, '*');
+*/		
+	w.postMessage("runModel()", "*");
+	console.log('msg posted');	
+}
+
+function resume() {
+	stepResults.resume();
+}
+
+
+</script>
+
+</body>
+</html>
+
