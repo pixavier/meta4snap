@@ -4,30 +4,52 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Measuring audio volume in JavaScript</title>
+	<link rel="stylesheet" href="w3.css">
+    <script src="mqtt.js"></script>
   </head>
   <body>
+	<script type="module">
+		import {Gauge} from './Gauge.js';
+	</script>
     <div id="content">
+	<center>
 	<h3>Cassolada inversa</h3>
+	<wg-gauge id="noiseMeter" value="0" max="100" uds="dB"></wg-gauge><br><br>
 	<button id="startButton">Iniciar</button>
-	<meter id="volumeMeter" high="0.25" max="1" value="0"></meter>
+	</center>
 
 	<script>
-		const volumeMeterEl = document.getElementById('volumeMeter');
-		const startButtonEl = document.getElementById('startButton');
+		let broker = 'ws://broker.emqx.io:8083/mqtt';
+		let client = mqtt.connect(broker);
+		let volumeMeterEl = document.getElementById('volumeMeter');
+		let noiseMeterEl = document.getElementById('noiseMeter');
+		let startButtonEl = document.getElementById('startButton');
+		
+		
 		startButtonEl.onclick = async () => {
 			startButtonEl.disabled = true;
-			const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-			const audioContext = new AudioContext();
-			const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
-			const analyserNode = audioContext.createAnalyser();
+			let stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+			let audioContext = new AudioContext();
+			let mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
+			let analyserNode = audioContext.createAnalyser();
 			mediaStreamAudioSourceNode.connect(analyserNode);
+			let tAnt = 0;
 
-			const pcmData = new Float32Array(analyserNode.fftSize);
-			const onFrame = () => {
+			let pcmData = new Float32Array(analyserNode.fftSize);
+			let onFrame = () => {
 				analyserNode.getFloatTimeDomainData(pcmData);
 				let sumSquares = 0.0;
-				for (const amplitude of pcmData) { sumSquares += amplitude*amplitude; }
-				volumeMeterEl.value = Math.sqrt(sumSquares / pcmData.length) * 4;
+				for (let amplitude of pcmData) { sumSquares += amplitude*amplitude; }
+				let measure = parseInt(Math.sqrt(sumSquares / pcmData.length) * 400);
+				noiseMeterEl.value = measure > 100 ? 100 : measure;
+				
+				let t = Date.now();
+				if (t - tAnt > 1000) {
+					client.publish("bithabitat/noise", '' + measure);
+					console.log(measure);
+					tAnt = t;
+				}
+				
 				window.requestAnimationFrame(onFrame);
 			};
 			window.requestAnimationFrame(onFrame);
