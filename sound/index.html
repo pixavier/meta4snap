@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Measuring audio volume in JavaScript</title>
+  </head>
+  <body>
+    <div id="content">
+	<h3>Cassolada inversa</h3>
+	<button id="startButton">Iniciar</button>
+	<meter id="volumeMeter" high="0.25" max="1" value="0"></meter>
+
+	<script>
+		const volumeMeterEl = document.getElementById('volumeMeter');
+		const startButtonEl = document.getElementById('startButton');
+		startButtonEl.onclick = async () => {
+			startButtonEl.disabled = true;
+			const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+			const audioContext = new AudioContext();
+			const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
+			const analyserNode = audioContext.createAnalyser();
+			mediaStreamAudioSourceNode.connect(analyserNode);
+
+			const pcmData = new Float32Array(analyserNode.fftSize);
+			const onFrame = () => {
+				analyserNode.getFloatTimeDomainData(pcmData);
+				let sumSquares = 0.0;
+				for (const amplitude of pcmData) { sumSquares += amplitude*amplitude; }
+				volumeMeterEl.value = Math.sqrt(sumSquares / pcmData.length) * 4;
+				window.requestAnimationFrame(onFrame);
+			};
+			window.requestAnimationFrame(onFrame);
+		};
+	</script>
+
+  </body>
+</html>
+
