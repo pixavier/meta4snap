@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Low-Code Experimental Basic 4.0 Metaverse</title>
+    <style>
+		html, body { width:100%; height:100%; } 	
+		canvas {
+          display: block;
+          margin: 5px auto;
+          width: 100%;
+          height: 100%;
+		}
+    </style>
+  </head>
+<body>
+<button onclick="btn01()" style="visibility:hidden">Action1</button>
+<script>
+	function btn01() {
+		window.opener.ide.broadcast('Hi', null, 'datum');
+	}
+</script>
+<script src="./libs/JSON5.js"></script>
+<script async src="./libs/es-module-shims.js"></script>
+<script type="importmap">
+{
+	"imports": {
+		"three": "./libs/three.module.js"
+	}
+}
+</script>
+<script type="module">
+
+import * as THREE from 'three';
+import {OrbitControls} from './libs/OrbitControls.js';
+import {STLLoader} from './libs/STLLoader.js';
+import {FontLoader} from './libs/FontLoader.js';
+import {CSS3DObject, CSS3DRenderer} from './libs/CSS3DRenderer.js';
+import CSG from "./libs/three-csg.js";
+
+//let defaultColor = 'darkgray';
+let defaultColor = 0x666666;
+let linesColor = 0x888888;
+let rid = '';
+let font01;
+var collidableMeshList = [];
+var collisionObj;
+
+let prevTime = performance.now();
+let velocity = new THREE.Vector3();
+let direction = new THREE.Vector3();
+let vertex = new THREE.Vector3();
+let color = new THREE.Color();
+
+
+//THREE.Object3D.DefaultUp.set(0, 1, 0);
+//let scene = createScene();
+
+let scene = null;
+let scene2 = null;
+let camera = null;
+let controls = null;
+let controlPressed = false;
+let shiftPressed = false;
+let canvas = null;
+
+createSceneCameraAndRenderer();
+
+animate();
+
+function animate() {
+	requestAnimationFrame(animate);
+	render();
+}
+
+//message = function(topic, payload) {
+//function message(evt) {
+function message(data) {
+	var payload = data;
+	var topic = '';
+	try {
+//		console.log(payload.toString());
+		let json = JSON5.parse(payload);
+		let op = json.op;
+		let param = json.param;
+/*		
+		console.log(topic);
+		console.log(op);
+		console.log(param);
+*/
+		if (op == 'createContainer') {
+			createSystemReference(topic, param);	
+		}
+
+		if (op == 'createText') {
+			createText(topic, param);	
+		}
+
+		if (op == 'createSpline') {
+			createSpline(topic, param);
+		}
+		
+		if (op == 'loadStl') {
+			loadStl(topic, param);	
+		}
+		
+		if (op == 'createElem') {
+		
+			if (param.type == 'Parallelpipped' || param.type == 'Cube') {
+				createParallelpipped(topic, param);			
+			}
+
+			if (param.type == 'Sphere') {
+				createSphere(topic, param);
+			}
+
+			if (param.type == 'Cone' || param.type == 'Cylinder') {
+				createCone(topic, param);
+			}
+
+			if (param.type == 'Torus') {
+				createTorus(topic, param);
+			}
+			
+			if (param.type == 'PlaneRectangle') {
+				createPlaneRectangle(topic, param);
+			}
+			
+			if (param.type == 'PlaneCircle') {
+				createPlaneCircle(topic, param);
+			}
+			
+			if (param.type == 'HTMLPanel') {
+				createHTMLPanel(topic, param);
+			}
+		}
+
+		if (op == 'clone') {
+			clone (topic, param);
+		}
+
+		if (op == 'setUserType') {
+			setUserType(topic, param);
+		}
+
+		if (op == 'setCamera') {
+			setCamera(topic, param);
+		}
+
+		if (op == 'setPose') {
+			setPose(topic, param);
+		}
+
+		if (op == 'setOpacity') {
+			setOpacity(topic, param);
+		}
+
+		if (op == 'setColor') {
+			setColor(topic, param);
+		}
+
+		if (op == 'add') {
+			add(topic, param);
+		}
+
+		if (op == 'remove') {
+			remove(topic, param);
+		}
+
+		if (op == 'removeSpline') {
+			removeSpline(topic, param);
+		}
+
+
+		if (op == 'showAxes') {
+			showAxes(topic, param);
+		}
+
+		if (op == 'hideAxes') {
+			hideAxes(topic, param);
+		}
+
+		if (op == 'reload') {
+			location.reload();
+		}
+
+		if (op == 'introspect') {
+			return introspect(topic, param);
+		}
+
+		if (op == 'getPose') {
+			return getPose(topic, param);
+		}
+
+		if (op == 'getPoseAbsolute') {
+			return getPoseAbsolute(topic, param);
+		}
+
+		if (op == 'getClass') {
+			return getClass(topic, param);
+		}
+
+		if (op == 'getPointAt') {
+			return getPointAt(topic, param);
+		}
+
+		if (op == 'getTrajectory') {
+			return getTrajectory(topic, param);
+		}
+
+		if (op == 'scale') {
+			scale(topic, param);
+		}
+
+		if (op == 'setCollisionObj') {
+			setCollisionObj(topic, param);
+		}
+
+		if (op == 'addCollidable') {
+			addCollidable(topic, param);
+		}
+
+		if (op == 'resetCollidables') {
+			collidableMeshList.length = 0;
+		}
+
+		if (op == 'collisionCheck') {
+			doCollisionCkeck(topic, param);
+		}
+
+		if (op == 'getCollisionObj') {
+			return getCollisionObj(topic, param);
+		}
+
+		if (op == 'getCollidables') {
+			return getCollidables(topic, param);
+		}
+
+		if (op == 'setOrbitControls') {
+			setOrbitControls(topic, param);
+		}
+
+		if (op == 'setAttribute') {
+			setAttribute(topic, param);
+		}
+
+		if (op == 'getAttribute') {
+			return getAtribute(topic, param);
+		}
+
+		if (op == 'getOID') {
+			return getOID(topic, param);
+		}
+
+		if (op == 'getDistance') {
+			return getDistance(topic, param);
+		}
+
+		if (op == 'getSnapshot') {
+			return getSnapshot(topic, param);
+		}
+		
+		if (op == 'setBackgroundColor') {
+			setBackgroundColor(topic, param);
+		}
+
+		if (op == 'substract') {
+			substract(topic, param);
+		}
+		
+		render();
+	} catch (e) {	
+		console.log(e.stack);
+//		console.log(e.message);
+	}
+}
+
+window.pmessage = message;
+
+window.pmessaget = function(param) {return 'abc ' + param;};
+
+if (window.addEventListener) {
+	// For standards-compliant web browsers
+	window.addEventListener("message", message, false);
+}
+else {
+	window.attachEvent("onmessage", message);
+}
+
+
+function tailLastComma(str) {
+	str = str.replace(/,\s*$/, "");
+	return str;
+}
+
+function tailIncrement(str) {
+	str = str.replace(/\+\+,\s*$/, "");
+	return str;
+}
+
+function tailDecrement(str) {
+	str = str.replace(/\-\-\s*$/, "");
+	return str;
+}
+
+function createSceneCameraAndRenderer() {
+	scene = new THREE.Scene();
+	scene2 = new THREE.Scene();
+	const skyColor = 0xB1E1FF;  // light blue
+	const groundColor = 0xB97A20;  // brownish orange
+	const intensity = 3;
+	let light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+	scene.add(light);	
+	window.renderer = new THREE.WebGLRenderer();
+//	renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );	
+	
+	canvas = window.renderer.domElement;
+    document.body.appendChild(canvas);
+    window.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    window.renderer.setClearColor(0xdddddd, 1);
+
+	camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+	camera.position.x = 2;
+	camera.position.y = 2;
+	camera.position.z = 10;
+	window.camera = camera;
+
+	controls = new OrbitControls(camera, canvas);
+	window.controls = controls;
+
+	let loader = new FontLoader();
+	loader.load( './libs/fonts/helvetiker_regular.typeface.json', function (font) {font01 = font});
+	
+	const onKeyDown = function (event) {
+		
+		switch (event.code) {
+			case 'ArrowUp':
+				camera.position.x -= 0.2 * Math.sin(camera.rotation.y);
+				camera.position.z -= 0.2 * Math.cos(camera.rotation.y);
+				console.log(event.code);	
+				console.log(camera);	
+				break;
+
+			case 'ArrowDown':
+				camera.position.x += 0.2 * Math.sin(camera.rotation.y);
+				camera.position.z += 0.2 * Math.cos(camera.rotation.y);
+				console.log(event.code);	
+				console.log(camera);	
+				break;
+
+			case 'ArrowLeft':
+				camera.rotation.y += 0.1;
+				break;
+
+			case 'ArrowRight':
+				camera.rotation.y -= 0.1;
+				break;
+
+			case 'ControlArrowUp':
+				break;
+
+			case 'ControlArrowDown':
+				break;
+
+			case 'ShiftArrowUp':
+				camera.position.y += 0.1;
+				break;
+
+			case 'ShiftArrowDown':
+				camera.position.y -= 0.1;
+				break;
+
+			case 'Space':
+				break;
+
+		}
+//		updateCameraOrbit();
+//		camera.updateProjectionMatrix();		
+//		controls.update();
+	};
+	
+	document.addEventListener('keydown', onKeyDown);
+
+	const updateCameraOrbit = function() {
+	  // Update OrbitControls target to a point just in front of the camera
+	  const forward = new THREE.Vector3();
+	  camera.getWorldDirection(forward);
+	  controls.target.copy(camera.position).add(forward);
+	};
+
+	const onKeyUp = function (event) {
+		
+		console.log(event.code);
+	
+		switch (event.code) {
+			case 'ShiftArrowUp':
+				shiftPressed = false;
+				break;
+
+			case 'ShiftArrowDown':
+				shiftPressed = true;
+				break;
+
+			case 'ControlArrowUp':
+				controlPressed = true;
+				break;
+
+			case 'ControlArrowDown':
+				controlPressed = false;
+				break;
+		}
+	}
+	
+	document.addEventListener('keyup', onKeyUp);
+}
+
+// ---------------------------------------------------------------
+
+function createParallelpipped(topic, param) {
+	let b = param.base;
+	let h = param.height;
+	let l = param.length;
+	let name = param.name;
+	let snapType = param.type;
+	
+	checkUniqueNameFirstLevel (scene, name);
+	const geometry = new THREE.BoxGeometry(b, h, l);
+	const edges = new THREE.EdgesGeometry(geometry);
+	let materialLines = new THREE.LineBasicMaterial({color: linesColor});
+//	let materialLines = new THREE.MeshLineMaterial({color: linesColor});
+	materialLines.transparent = true;
+	materialLines.opacity = 1;
+	const lines = new THREE.LineSegments(edges, materialLines);
+	if (name) lines.name = name + '_lines';
+	let material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	material.transparent = true;
+	material.opacity = 1;
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+	scene.add(lines);
+}
+
+function createParallelpipped_Stemkoski(topic, param) {
+	let b = param.b;
+	let h = param.h;
+	let l = param.l;
+	let name = param.name;
+	let snapType = param.type;
+	
+	checkUniqueNameFirstLevel (scene, name);
+	const geometry = new THREE.BoxGeometry(b, h, l, 1, 1, 1);
+	var material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	material.transparent = true;
+	material.opacity = 1;
+	var wireMaterial = new THREE.MeshStandardMaterial({color: linesColor, wireframe:true});
+	wireMaterial.transparent = true;
+	wireMaterial.opacity = 1;
+	var obj = new THREE.Mesh(geometry, material);
+	var lines = new THREE.Mesh(geometry, wireMaterial);
+	if (name) lines.name = name + '_lines';
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+	scene.add(lines);
+}
+
+function createSphere(topic, param) {
+	let r = param.r;
+	let arc = param.arc;
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	let arcRad = arc * 2 * Math.PI / 360;
+	const geometry = new THREE.SphereGeometry(r, 32, 16, 0, arcRad);
+	const edges = new THREE.EdgesGeometry(geometry);
+	let materialLines = new THREE.LineBasicMaterial({color: linesColor});
+	materialLines.transparent = true;
+	materialLines.opacity = 1;
+	const lines = new THREE.LineSegments(edges, materialLines);
+	if (name) lines.name = name + '_lines';
+	let material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	material.transparent = true;
+	material.opacity = 1;
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+	scene.add(lines);
+}
+
+function createCone(topic, param) {
+	let r1 = param.r1;
+	let r2 = param.r2;
+	let l = param.length;
+	let arc = param.arc;
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	let arcRad = arc * 2 * Math.PI / 360;
+	const geometry = new THREE.CylinderGeometry(r1, r2, l, 32, 16, false, 0, arcRad);
+	const edges = new THREE.EdgesGeometry(geometry);
+	let materialLines = new THREE.LineBasicMaterial({color: linesColor});
+	materialLines.transparent = true;
+	materialLines.opacity = 1;
+	const lines = new THREE.LineSegments(edges, materialLines);
+	if (name) lines.name = name + '_lines';
+	let material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	material.transparent = true;
+	material.opacity = 1;
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+	scene.add(lines);
+}
+
+function createTorus(topic, param) {
+	let r = param.r;
+	let rTube = param.rTube;
+	let arc = param.arc;
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	let arcRad = arc * 2 * Math.PI / 360;
+	const geometry = new THREE.TorusGeometry(r, rTube, 16, 100, arcRad);
+	const edges = new THREE.EdgesGeometry(geometry);
+	let materialLines = new THREE.LineBasicMaterial({color: linesColor});
+	materialLines.transparent = true;
+	materialLines.opacity = 1;
+	const lines = new THREE.LineSegments(edges, materialLines);
+	if (name) lines.name = name + '_lines';
+	const material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	material.transparent = true;
+	material.opacity = 1;
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+	scene.add(lines);
+}
+
+function createText(topic, param) {
+	let text = param.text;
+	let name = param.name;
+	let snapType = param.type;
+	
+	checkUniqueNameFirstLevel (scene, name);
+	const material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+	const shapes = font01.generateShapes(text, 0.7);
+	const geometry = new THREE.ShapeGeometry(shapes);
+	geometry.computeBoundingBox();
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+}
+
+function createPlaneRectangle(topic, param) {
+	let width = param.width;
+	let height = param.height;
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	const geometry = new THREE.PlaneGeometry(width, height);
+	const material = new THREE.MeshStandardMaterial({color: defaultColor, side: THREE.DoubleSide});
+	const obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+}
+
+function createPlaneCircle(topic, param) {
+	let radius = param.radius;
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	material = new THREE.MeshStandardMaterial({color: defaultColor, side: THREE.DoubleSide});
+	geometry = new THREE.CircleGeometry(radius, 32);
+	obj = new THREE.Mesh(geometry, material);
+	if (name) obj.name = name;
+	obj.userData.snapType = snapType;
+	scene.add(obj);
+}
+
+function createSpline(topic, param) {
+	let name = param.name;
+	let snapType = param.type;
+
+	let objs = getObjectAndWiresByNameOrId(name);
+	let obj = objs[0];
+	if (obj) {
+		let vPoints = [];
+		for (child of obj.children) {
+			if (child.userData.userType == 'Point') {
+				vPoints.push(new THREE.Vector3(child.position.x, child.position.y, child.position.z));
+			}
+		}
+		let curve = new THREE.CatmullRomCurve3(vPoints);
+		let points = curve.getPoints(50);
+		let geometry = new THREE.BufferGeometry().setFromPoints(points);
+		let material = new THREE.LineBasicMaterial({color: 0xff0000});
+		material.transparent = true;
+		material.opacity = 1;
+		let curveObject = new THREE.Line(geometry, material);
+		curveObject.name = obj.name + '_spline';
+		curveObject.userData.points = vPoints;
+//		curveObject.userData.points = JSON5.stringify(vPoints);
+		obj.add(curveObject);
+	}
+}
+
+function createHTMLPanel(topic, param) {
+	let width = param.width;
+	let height = param.height;
+	let name = param.name;
+	let snapType = param.type;
+
+	// convert the string to dome elements
+	var wrapper = document.createElement('div');
+	
+	let content = 
+		'<div id="cmp01" style="position:absolute;top:180px;left:400;width:400px;height:200px;border:0.5px solid;overflow:auto">' +
+		'	<h3>Hello from Cambridge</h3>' +
+		'</div>';
+	
+	wrapper.innerHTML = content;
+//	var div = wrapper.firstChild;
+	var div = wrapper;
+	
+	// set some values on the div to style it.
+	// normally you do this directly in HTML and 
+	// CSS files.
+	div.style.width = width + 'px';
+	div.style.height = height + 'px';
+	div.style.opacity = 0.7;
+	div.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
+
+	// create a CSS3Dobject and return it.
+	var cssElement = new CSS3DObject(div);
+
+//	cssElement.position.set(100, 100, 100);
+	cssElement.name = name;
+	cssElement.userData.snapType = snapType;
+	scene2.add(cssElement);
+}
+
+function loadStl(topic, param) {
+	let filename = param.filename;
+	let name = param.name;
+	let snapType = param.type;
+
+// https://dustinpfister.github.io/2021/06/21/threejs-texture-loader
+	let loader = new STLLoader();
+	let group = new THREE.Object3D();
+	loader.load("./libs/objs/" + filename, function (geometry) {
+//		var material = new THREE.MeshLambertMaterial({color: defaultColor});
+		var material = new THREE.MeshStandardMaterial({color: defaultColor, roughness: 0.2, metalness: 0.3});
+		group = new THREE.Mesh(geometry, material);
+//		group.rotation.x = -0.5 * Math.PI;
+		group.scale.set(0.05, 0.05, 0.05);
+		if (name) group.name = name;
+		group.userData.snapType = snapType;
+		scene.add(group);
+	});
+}
+
+function createSystemReference(topic, param) {  // Container
+	let name = param.name;
+	let snapType = param.type;
+
+	checkUniqueNameFirstLevel (scene, name);
+	let sysref = new THREE.Object3D();
+	if (name) sysref.name = name;
+	sysref.userData.snapType = snapType;
+	scene.add(sysref);
+}
+
+function clone(topic, param) {
+	let name = param.name;
+	let newname = param.newname;
+	
+	let objs = getObjectAndWiresByNameOrId(name);
+	let obj = objs[0];
+	if (obj) {
+		checkUniqueNameFirstLevel (scene, newname);
+		let obj2 = obj.clone();
+		obj2.name = newname;
+		scene.add(obj2);
+	}
+	let objLines = objs[1];
+	if (objLines) {
+		checkUniqueNameFirstLevel (scene, newname + '_lines');
+		let objLines2 = objLines.clone();
+		objLines2.name = newname + '_lines';
+		scene.add(objLines2);
+	}
+}
+
+function setUserType(topic, param) {
+	let name = param.name;
+	let userType = param.userType;
+	
+	let objs = getObjectAndWiresByNameOrId(name);
+	let obj = objs[0];
+	if (obj && obj.userData) obj.userData.userType = userType;
+}
+
+function setPose(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	if (objs[0]) pose(objs[0], param.x, param.y, param.z, param.rx, param.ry, param.rz);
+	if (objs[1]) pose(objs[1], param.x, param.y, param.z, param.rx, param.ry, param.rz);
+}
+
+function setOpacity(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) opacity(obj, param.opacity);
+	let obj_lines = objs[1];
+	if (obj) opacity(obj_lines, param.opacity);
+}
+
+function setColor(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) kolor(obj, param.color);
+}
+
+function add(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	let objLines = objs[1];
+
+	let objsParent = getObjectAndWiresByNameOrId(param.parent);
+	let objParent = objsParent[0];
+	checkUniqueNameFirstLevel (objParent, param.name);
+	if (obj && objParent) objParent.add(obj);
+	if (objLines && objParent) objParent.add(objLines);
+}
+
+function remove(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	let obj_lines = objs[1];
+	if (obj) obj.parent.remove(obj);
+	if (obj_lines) obj_lines.parent.remove(obj_lines);
+}
+
+function removeSpline(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		let child = getChild(obj, '_spline');
+		obj.remove(child);
+	}
+}
+
+function substract(topic, param) {
+	let objs1 = getObjectAndWiresByNameOrId(param.name1);
+	let objs2 = getObjectAndWiresByNameOrId(param.name2);
+	let obj1 = objs1[0];
+	let obj2 = objs2[0];
+	let obj1_lines = objs1[1];
+
+	obj1.updateMatrix()
+	obj2.updateMatrix()
+	obj1_lines.updateMatrix()
+
+	let bsp1 = CSG.fromMesh(obj1);                        
+	let bsp2 = CSG.fromMesh(obj2);
+//	let bsp1_lines = CSG.fromMesh(obj1_lines);
+
+	let bspResult = bsp1.subtract(bsp2);
+	let meshResult = CSG.toMesh(bspResult, obj1.matrix, obj1.material);
+
+//	let bspResult_lines = bsp1_lines.subtract(bsp2);
+//	let meshResult_lines = CSG.toMesh(bspResult_lines, obj1_lines.matrix, obj1_lines.material);
+	
+	let meshResult_lines = obj1_lines;
+				
+	meshResult.name = param.name3;
+	meshResult_lines.name = param.name3 + '_lines';
+	
+	scene.add(meshResult);
+	scene.add(meshResult_lines);
+}
+
+function showAxes(topic, param) {
+	const axesHelper = new THREE.AxesHelper(param.length);
+	let obj;
+	if (param.name && param.name != 'scene') {
+		axesHelper.name = param.name + '_axes';
+		let objs = getObjectAndWiresByNameOrId(param.name);
+		obj = objs[0];
+	} else {
+		axesHelper.name = 'scene_axes';
+		obj = scene;
+	}
+	if (obj) obj.add(axesHelper);
+}
+
+function hideAxes(topic, param) {
+	let obj;
+	let objAxes;
+	if (param.name && param.name != 'scene') {
+		let objs = getObjectAndWiresByNameOrId(param.name);
+		let obj = objs[0];
+		objAxes = obj.getObjectByName(param.name + '_axes');
+	} else {
+		obj = scene;
+		objAxes = obj.getObjectByName('scene_axes');
+	}
+	if (obj) obj.remove(objAxes);
+}
+
+function introspect(topic, param) {
+	let res = {};
+	let obj, rot;
+	if (param.name == '' || param.name == 'scene') {
+		obj = scene;
+		obj.userData.snapType = 'minimalMetaverse';
+	} else {
+		let objs = getObjectAndWiresByNameOrId(param.name);
+		obj = objs[0];
+	}
+	if (obj) {
+		let objThis = {};
+		objThis.name = obj.name;
+		objThis.id = 'oid' + obj.id;
+		if (param.extended) {
+			objThis.type = obj.type;
+			objThis.userType = obj.userData.userType??'';
+			objThis.snapType = obj.userData.snapType??'';
+			objThis.position = obj.position;
+			rot = {};
+			rot.rx = obj.rotation.x;
+			rot.ry = obj.rotation.y;
+			rot.rz = obj.rotation.z;
+			objThis.rotation = rot;
+		}
+		res.object = objThis;
+		let objParent = {};
+		if (obj.parent) {
+			objParent.name = obj.parent.name;
+			objParent.id = 'oid' + obj.parent.id;
+			if (param.extended) {
+				objParent.type = obj.parent.type;
+				objParent.userType = obj.parent.userData.userType??'';
+				objParent.snapType = obj.parent.userData.snapType??'';
+				objParent.position = obj.parent.position;
+				rot = {};
+				rot.rx = obj.parent.rotation.x;
+				rot.ry = obj.parent.rotation.y;
+				rot.rz = obj.parent.rotation.z;
+				objParent.rotation = rot;
+			}
+		}
+		res.parent = objParent;
+		let children = [];
+		for (let child of obj.children) {
+			let objChild;
+			if ((	child.type == 'Mesh' || child.type == 'Line' ||	child.type == 'Object3D') && 
+					child.name != 'Ground' &&
+					child.name != 'BoundingBoxHelper' &&
+					!child.name.endsWith('_lines') && 
+					!child.name.endsWith('_axes')) {
+					
+				objChild = {};
+				
+				objChild.name = child.name;
+				objChild.id = 'oid' + child.id;
+				if (param.extended) {
+					objChild.type = child.type;
+					objChild.userType = child.userData.userType??'';
+					objChild.snapType = child.userData.snapType??'';
+					objChild.position = child.position;
+					rot = {};
+					rot.rx = child.rotation.x;
+					rot.ry = child.rotation.y;
+					rot.rz = child.rotation.z;
+					objChild.rotation = rot;
+				}
+			}
+			if(objChild) children.push(objChild);
+		}
+		res.children = children;
+	}
+	return JSON.stringify(res, null, 2);
+}
+
+function getPose(topic, param) {
+	let res = new Array(6);
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		res[0] = obj.position.x;
+		res[1] = obj.position.y;
+		res[2] = obj.position.z;
+		res[3] = THREE.Math.radToDeg(obj.rotation.x);
+		res[4] = THREE.Math.radToDeg(obj.rotation.y);
+		res[5] = THREE.Math.radToDeg(obj.rotation.z);
+	}
+	return JSON.stringify(res, null, 2);
+}
+
+function getPoseAbsolute(topic, param) {
+	let res = new Array(6);
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		obj.updateMatrixWorld();
+		let absPosition = new THREE.Vector3();
+		obj.getWorldPosition(absPosition);				
+		res[0] = absPosition.x;
+		res[1] = absPosition.y;
+		res[2] = absPosition.z;
+		let absRotation = new THREE.Euler();
+		let quaternion = new THREE.Quaternion();
+		obj.getWorldQuaternion(quaternion);
+		absRotation.setFromQuaternion(quaternion);
+		res[3] = THREE.Math.radToDeg(absRotation.x);
+		res[4] = THREE.Math.radToDeg(absRotation.y);
+		res[5] = THREE.Math.radToDeg(absRotation.z);
+	}
+	return JSON.stringify(res, null, 2);
+}
+
+function getClass(topic, param) {
+	let res = '';
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj && obj.userData.userType) {
+		res = obj.userData.userType;
+	}
+	return res;
+}
+
+function getPointAt(topic, param) {
+	let res = '';
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		let child = getChild(obj, '_spline');
+		if (child) {
+			let curve = new THREE.CatmullRomCurve3(child.userData.points);
+			let v = curve.getPointAt(param.t > 1 ? 1 : param.t);
+			res = '[' + v.x + ',' + v.y + ',' + v.z + ']';
+		}
+	}
+	return res;
+}
+
+function getTrajectory(topic, param) {
+	let res = '';
+	let m = parseInt(param.n);
+	let step = 1 / (m - 1);
+	let t = 0;
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		let child = getChild(obj, '_spline');
+		if (child) {
+			let curve = new THREE.CatmullRomCurve3(child.userData.points);
+			res = '[';
+			for (i = 0; i < m; i++) {
+				let v = curve.getPointAt(t);
+				res += '\n[' + v.x + ',' + v.y + ',' + v.z + '],';
+				t += step;
+				if (t > 1) t = 1;
+			}
+			res = tailLastComma(res);
+			res += '\n]';
+		}
+	}
+	return res;
+}
+
+function setScale(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) scale(obj, param.factor, param.factor, param.factor);
+}
+
+function setCollisionObj(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	collisionObj = objs[0];
+}
+
+function addCollidable(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		collidableMeshList.push(obj);
+	}
+}
+
+function doCollisionCheck(topic, param) {
+	let res = '';
+	res = '' + collisionCheck();
+//	client.publish(callback, res);
+}
+
+function getCollisionObj(topic, param) {
+	let res = {};
+	if (collisionObj) {
+		res.name = collisionObj.name;
+		res.id = 'oid' + collisionObj.id;
+	}
+	return JSON.stringify(res, null, 2);
+}
+
+function getCollidables(topic, param) {
+	let res = '[]';
+	let v = [];
+	let objRes;
+	for (let coll of collidableMeshList) {
+		objRes = {};
+		objRes.name = coll.name;
+		objRes.id = 'oid' + coll.id;
+		v.push(objRes);
+	}
+	res = JSON.stringify(v, null, 2);;
+	return res;
+}
+
+function setOrbitControls(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		controls.target.copy(obj.position);
+	}
+}
+
+function setAttribute(topic, param) {
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		if (obj.userData.attr) {
+			obj.userData.attr[param.attr] = param.value;			
+		} else {
+			obj.userData.attr = {};
+			obj.userData.attr[param.attr] = param.value;			
+		}
+	}
+}
+
+function getAttribute(topic, param) {
+	let res = '';
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj && obj.userData.attr) {
+		res = obj.userData.attr[param.attr];
+	}
+	return res;
+}
+
+function getOID(topic, param) {
+	let res = '';
+	let objs = getObjectAndWiresByNameOrId(param.name);
+	let obj = objs[0];
+	if (obj) {
+		res = 'oid' + obj.id;
+	}
+	return res;
+}
+
+function getDistance(topic, param) {
+	let res = 0;
+	let x1 = param.point1[0];
+	let y1 = param.point1[1];
+	let z1 = param.point1[2];
+	let x2 = param.point2[0];
+	let y2 = param.point2[1];
+	let z2 = param.point2[2];
+	res = '' + Math.sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2); 
+	return res;
+}
+
+
+function getSnapshot(topic, param) {
+	let res = '';
+	canvas.getContext('webgl' , {preserveDrawingBuffer: true});
+	render();
+	res = canvas.toDataURL();
+	canvas.getContext('webgl' , {preserveDrawingBuffer: false});	
+	window.lastSnapshot = res;
+	return res;
+}
+
+
+// -----------------------------------------------------------------
+
+function pose(obj, x, y, z, rx, ry, rz) {
+	if (x) {
+		if (x.endsWith('++')) obj.position.x += parseFloat(tailIncrement(x));
+		else if (x.endsWith('--')) obj.position.x -= parseFloat(tailDecrement(x));
+		else obj.position.x = parseFloat(x);
+	}
+	if (y) {
+		if (y.endsWith('++')) obj.position.y += parseFloat(tailIncrement(y));
+		else if (y.endsWith('--')) obj.position.y -= parseFloat(tailDecrement(y));
+		else obj.position.y = parseFloat(y);
+	}
+	if (z) {
+		if (z.endsWith('++')) obj.position.z += parseFloat(tailIncrement(z));
+		else if (z.endsWith('--')) obj.position.z -= parseFloat(tailDecrement(z));
+		else obj.position.z = parseFloat(z);
+	}
+	if (rx) {
+		if (rx.endsWith('++')) obj.rotation.x += THREE.Math.degToRad(parseFloat(tailIncrement(rx)));
+		else if (rx.endsWith('--')) obj.rotation.x -= THREE.Math.degToRad(parseFloat(tailDecrement(rx)));
+		else obj.rotation.x = THREE.Math.degToRad(parseFloat(rx));
+	}
+	if (ry) {
+		if (ry.endsWith('++')) obj.rotation.y += THREE.Math.degToRad(parseFloat(tailIncrement(ry)));
+		else if (ry.endsWith('--')) obj.rotation.y -= THREE.Math.degToRad(parseFloat(tailDecrement(ry)));
+		else obj.rotation.y = THREE.Math.degToRad(parseFloat(ry));
+	}
+	if (rz) {
+		if (rz.endsWith('++')) obj.rotation.z += THREE.Math.degToRad(parseFloat(tailIncrement(rz)));
+		else if (rz.endsWith('--')) obj.rotation.z -= THREE.Math.degToRad(parseFloat(tailDecrement(rz)));
+		else obj.rotation.z = THREE.Math.degToRad(parseFloat(rz));
+	}
+}
+
+function kolor(obj, color) {
+	if (obj) {
+		if (obj.material) obj.material.color = new THREE.Color(color); 
+		for (let child of obj.children) {
+			if (!child.name.endsWith('_lines') && !child.name.endsWith('_axes')) {
+				kolor(child, color);
+			}
+		}
+	}
+}
+
+function opacity(obj, value) {
+	if (obj) {
+		if (obj.material) obj.material.opacity = value; 
+		for (let child of obj.children) {
+			opacity(child, value);
+		}
+	}
+}
+
+function scale(obj, xf, yf, zf) {
+	if (obj) {
+		obj.scale.x = xf;
+		obj.scale.y = yf;
+		obj.scale.z = zf;
+		obj.position.x *= xf;
+		obj.position.y *= yf;
+		obj.position.z *= zf;
+		for (let child of obj.children) {
+			scale(child, xf, yf, zf);
+		}
+	}
+}
+
+function getObjectByNameFirstLevel(obj, name) {
+	let res = undefined;
+	let n = obj.children.length;
+	for (let i = 0; i < n; i++) {
+		if (obj.children[i].name == name) {
+			res = obj.children[i];
+			break;
+		}
+	}
+	return res;
+}
+
+function getChild(obj, suffix) {
+	let res = {};
+	for (let child of obj.children) {
+		if (child.name.endsWith(suffix)) {
+			res = child;
+			break;
+		} 
+	}
+	return res;
+}
+
+
+function checkUniqueNameFirstLevel (obj, name) {
+	if (name) {
+		if (getObjectByNameFirstLevel(obj, name)) {
+			throw new Error ('Duplicate name ' + name + ' in the same level at ' + (obj.name == '' ? 'scene' : obj.name));
+		}
+	} else {
+		throw new Error("Cannot create object without name");
+	}
+}
+
+function getObjectAndWiresByNameOrId(name) {
+	let res = new Array(2);  // 0 => obj, 1 => objLines
+	
+	if (name && name == 'camera') {
+		res[0] = camera;
+	} else if (name && name == 'scene') {
+		res[0] = scene;
+	} else if (name && name.startsWith('oid')) {
+		let id = parseInt(name.substring(3));
+		res[0] = scene.getObjectById(id);
+		if (res[0])	res[1] = res[0].parent.getObjectByName(res[0].name + '_lines');
+	} else if (name && name != 'scene') {
+		if (name.indexOf(';') >= 0 || name.indexOf('/') >= 0) {
+			let names = name.replaceAll('/', ';');
+			names = name.split(';');
+			let n = names.length;
+			let obj = scene.getObjectByName(names[0]);
+			if (!obj) return res;
+			let objLines;
+			for (let i = 1; i < n; i++) {
+				objLines = getObjectByNameFirstLevel(obj, names[i] + '_lines');
+				obj = getObjectByNameFirstLevel(obj, names[i]);
+				if (!obj) return res;
+			}
+			res[0] = obj;
+			res[1] = objLines;
+		} else {
+			res[0] = getObjectByNameFirstLevel(scene, name);
+			res[1] = getObjectByNameFirstLevel(scene, name + '_lines');
+		}
+	}
+	return res;
+}
+
+window.getObjectAndWiresByNameOrId = getObjectAndWiresByNameOrId;
+
+function collisionCheck()
+{
+	let res = '[]';
+	if (collisionObj) {
+		let originPoint = collisionObj.position.clone();
+		let v = [];
+		let objElem;
+		for (let vertexIndex = 0; vertexIndex < collisionObj.geometry.vertices.length; vertexIndex++)
+		{
+			let localVertex = collisionObj.geometry.vertices[vertexIndex].clone();
+			let globalVertex = localVertex.applyMatrix4(collisionObj.matrixWorld);
+			let directionVector = globalVertex.sub(collisionObj.position);
+			let ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+			let collisionResults = ray.intersectObjects(collidableMeshList);
+			if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+				objElem = {};
+				objElem.name = collisionResults[0].object.name??'';
+				objElem.id = 'oid' + collisionResults[0].object.id;
+				let found = false;
+				for (let vElem of v) {
+					if (vElem.id == objElem.id) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)	v.push(objElem);
+			}
+		}
+		res = JSON.stringify(v, null, 2);
+	}
+	return res;
+}
+
+function setBackgroundColor(topic, param) {
+    window.renderer.setClearColor(parseInt(param.color), 1);
+	window.renderer.render(scene, camera);
+}
+
+
+function render() {
+	window.renderer.render(scene, camera);
+}
+
+
+</script>
+
+</body>
+</html>

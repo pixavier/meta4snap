@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Using Snap! On Your Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../../src/morphic.js"></script>
+        <script src="../../src/symbols.js"></script>
+        <script src="../../src/widgets.js"></script>
+        <script src="../../src/blocks.js"></script>
+        <script src="../../src/threads.js"></script>
+        <script src="../../src/objects.js"></script>
+        <script src="../../src/scenes.js"></script>
+        <script src="../../src/gui.js"></script>
+        <script src="../../src/paint.js"></script>
+        <script src="../../src/lists.js"></script>
+        <script src="../../src/byob.js"></script>
+        <script src="../../src/tables.js"></script>
+        <script src="../../src/sketch.js"></script>
+        <script src="../../src/video.js"></script>
+        <script src="../../src/maps.js"></script>
+        <script src="../../src/extensions.js?"></script>
+        <script src="../../src/xml.js"></script>
+        <script src="../../src/store.js"></script>
+        <script src="../../src/locale.js"></script>
+        <script src="../../src/cloud.js"></script>
+        <script src="../../src/api.js"></script>
+        <script src="../../src/sha512.js"></script>
+        <script src="../../src/FileSaver.min.js"></script>
+        <script>
+		Process.prototype.enableJS = true;
+            var world;
+            var world2;
+			var ide;
+            window.onload = function () {
+                ide = new IDE_Morph({
+                        path: '.',
+                        load: 'meta.xml',
+                        design: "flat",
+                        border: 1,
+                        hideControls: false,
+                        hideCategories: false,
+                        noSprites: false,
+                        noImports: false,
+                        noOwnBlocks: false,
+                        noRingify: false,
+                        noUserSettings: false,
+                        noDevWarning: false
+                    }),
+                    loop = () => {
+                        requestAnimationFrame(loop);
+                        world.doOneCycle();
+                    };
+                world = new WorldMorph(document.getElementById('world'), false);
+                ide.openIn(world);
+				
+	            world2 = document.getElementById('world2');
+                requestAnimationFrame(loop);
+            };
+        </script>
+    </head>
+    <body>
+		<h2>Microworlds Foundation	</h2>
+        <canvas id="world" tabindex="1" width="500" height="600"></canvas>
+        <iframe id="world2" tabindex="2" width="950" height="600" scrolling="no" frameBorder="0" src="meta.html"></iframe>
+    </body>
+</html>
