@@ -12,6 +12,6 @@ In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!
 
 meta4Snap can interact with external systems using the MQTT extension for Snap *!*.
 
-The first release used MQTT to connect the 3D visot to Snap *!*. [Try it](https://pixavier.github.io/meta4snap/old) here.
+The first release used MQTT to connect the 3D visot to Snap *!*. You can [try it](https://pixavier.github.io/meta4snap/old) here.
 
 This project is inspired by projects like [BeetleBlocks](http://beetleblocks.com).
