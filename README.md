@@ -3,7 +3,7 @@
 Snap *!* controlled experimental minimal 4.0 metaverse, for educational and evangelization purposes.
 In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!* connected to Snap *!* in a bidirectional way using the [Snap *!* API](https://github.com/jmoenig/Snap/blob/master/docs/API.md).
 
-<!--- ## [Try it](https://pixavier.github.io/meta4snap) --->
+<!--- ## [Try it](https://pixavier.github.io/meta4snap/old) --->
 
 ## [Try it](http://vps656540.ovh.net/minimeta)
 
