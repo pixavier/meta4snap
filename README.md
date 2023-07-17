@@ -9,6 +9,9 @@ In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!
 
 ![View](img/example01.png)
 
+It can be encapsulated as a microworld as shown [here](https://pixavier.github.io/snap/pyret/minimeta/inline.htm)
+
+
 meta4Snap can interact with external systems using the MQTT extension for Snap *!*.
 
 The first release used MQTT to connect the 3D visot to Snap *!*. You can [try it](https://pixavier.github.io/meta4snap/old) here.
