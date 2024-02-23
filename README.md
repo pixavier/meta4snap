@@ -17,4 +17,5 @@ The first release used MQTT to connect the 3D visot to Snap *!*. You can [try it
 
 This project is inspired by projects like [BeetleBlocks](http://beetleblocks.com).
 
-It was presented at SnapCon *!* 2023  [https://www.youtube.com/watch?v=bcbM8aeqKs8](video)   [Slides](doc/SnapCon2023_xpi.pdf)
+It was presented at SnapCon *!* 2023  [video]([video](https://www.youtube.com/watch?v=bcbM8aeqKs8)https://www.youtube.com/watch?v=bcbM8aeqKs8)  -  ([Slides](doc/SnapCon2023_xpi.pdf))
+
