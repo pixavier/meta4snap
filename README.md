@@ -5,7 +5,9 @@ In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!
 
 <!--- ## [Try it](https://pixavier.github.io/meta4snap/old) --->
 
-## [Try it](https://pixavier.github.io/snap/snap.html#open:pyret/minimeta/meta.xml)
+## [Try it](https://pixavier.github.io/snap/snap.html#open:pyret/minimeta/meta_basic.xml)
+
+[Experimental](https://pixavier.github.io/snap/snap.html#open:pyret/minimeta/meta.xml)
 
 ![View](img/example01.png)
 
