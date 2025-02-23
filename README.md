@@ -5,13 +5,13 @@ In consists of a 3D visor based on [three.js](https://threejs.org) and a Snap *!
 
 <!--- ## [Try it](https://pixavier.github.io/meta4snap/old) --->
 
-## [Try it](https://pixavier.github.io/snap/snap.html#open:pyret/minimeta/meta_basic.xml)
+## [Try it](https://pixavier.github.io/snap/snap.html#open:../microworlds/mws/pyret/minimeta/meta_basic.xml)
 
-[Experimental](https://pixavier.github.io/snap/snap.html#open:pyret/minimeta/meta.xml)
+[Experimental](https://pixavier.github.io/snap/snap.html#open:../microworlds/mws/pyret/minimeta/meta.xml)
 
 ![View](img/example01.png)
 
-It can be encapsulated as a microworld as shown [here](https://pixavier.github.io/snap/pyret/minimeta/inline.html)
+It can be encapsulated as a microworld as shown [here](https://pixavier.github.io/microworlds/mws/pyret/minimeta/inline.html)
 
 meta4Snap can interact with external systems using the MQTT extension for Snap *!*.
 
