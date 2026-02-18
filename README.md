@@ -13,6 +13,8 @@ In consists of a 3D viewer based on [three.js](https://threejs.org) and a Snap *
 
 It can be encapsulated as a microworld as shown [here](https://pixavier.github.io/microworlds/mws/pyret/minimeta/inline.html)
 
+Synchronizing with other simulations [3D pendulum](http://vps656540.ovh.net/snap/snap.html#open:mi40/pendulum_min_numeric_mqtt_pid.xml)
+
 meta4Snap can interact with external systems using the MQTT extension for Snap *!*.
 
 The first release used MQTT to connect the 3D viewer to Snap *!*. You can [try it](https://pixavier.github.io/meta4snap/old) here.
