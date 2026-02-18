@@ -5,7 +5,7 @@ In consists of a 3D viewer based on [three.js](https://threejs.org) and a Snap *
 
 <!--- ## [Try it](https://pixavier.github.io/meta4snap/old) --->
 
-## [Try it](https://pixavier.github.io/snap/snap.html#open:../microworlds/mws/pyret/minimeta/meta_basic.xml)
+## [Try it](https://xavierpi.com/dt01)
 
 [Experimental](https://pixavier.github.io/snap/snap.html#open:../microworlds/mws/pyret/minimeta/meta.xml)
 
